@@ -1,7 +1,6 @@
 package com.example.testmanager.model;
 
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 
@@ -10,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "speciments")
+@Table(name = "speciments", schema = "public")
 public class Specimen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +17,16 @@ public class Specimen {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "programm_id", nullable = false)
-    private Programm programm;
+    private Program program;
     @Column(name = "marking", nullable = false)
     private String marking;
     @Enumerated(EnumType.STRING)
-    @Column(name = "standart")
-    private Standart standart;
+    @Column(name = "standard")
+    private Standard standard;
+    @Column(name = "protocol")
+    private String protocol;
 
-    public enum Standart {
+    public enum Standard {
         ASTMD3039,
         ASTMD6641,
         ASTMD2344,

@@ -12,8 +12,8 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "programms")
-public class Programm {
+@Table(name = "programms", schema = "public")
+public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "speicimen_id", updatable = false, nullable = false, unique = true)
