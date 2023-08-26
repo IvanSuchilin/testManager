@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 @Getter
@@ -23,4 +24,6 @@ public class NewSpecimenDto {
     @NotBlank
     @Size(max = 50, min = 1)
     private String protocol;
+    private Double strength;
+    private Double module;
 }

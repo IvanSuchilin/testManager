@@ -25,6 +25,10 @@ public class Specimen {
     private Standard standard;
     @Column(name = "protocol")
     private String protocol;
+    @Column(name = "strength")
+    private Double strength;
+    @Column(name = "module")
+    private Double module;
 
     public enum Standard {
         ASTMD3039,
