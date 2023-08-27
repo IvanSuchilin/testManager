@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping(path = "/specimen")
+@RequestMapping
 public class SpecimenController {
     private final SpecimenService specimenService;
 
-    @PostMapping
+    @PostMapping(path = "/specimen")
     public ResponseEntity<Object> createSpecimen(@RequestBody NewSpecimenDto newSpecimen){
-        log.info("Внесение в базу образца №{}", newSpecimen.getMarking());
+        log.info("Внесение в базу образца № " + newSpecimen.getMarking());
         return new ResponseEntity<>(specimenService.createSpecimen(newSpecimen), HttpStatus.CREATED);
     }
 }

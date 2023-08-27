@@ -15,7 +15,7 @@ public class Specimen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "speicimen_id", updatable = false, nullable = false, unique = true)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "programm_id", nullable = false)
     private Program program;
     @Column(name = "marking", nullable = false)
