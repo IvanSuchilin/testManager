@@ -12,13 +12,13 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "programms", schema = "public")
+@Table(name = "programs", schema = "public")
 public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "speicimen_id", updatable = false, nullable = false, unique = true)
+    @Column(name = "program_id", updatable = false, nullable = false, unique = true)
     private Long id;
-    @Column(name = "number", nullable = false)
+    @Column(name = "program_number", nullable = false)
     private String number;
     @Column(name = "annotation", nullable = false)
     private String annotation;

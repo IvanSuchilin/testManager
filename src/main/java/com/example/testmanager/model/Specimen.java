@@ -9,20 +9,20 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "speciments", schema = "public")
+@Table(name = "specimens", schema = "public")
 public class Specimen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "speicimen_id", updatable = false, nullable = false, unique = true)
+    @Column(name = "specimen_id", updatable = false, nullable = false, unique = true)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "programm_id", nullable = false)
+    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
     @Column(name = "marking", nullable = false)
     private String marking;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "standard")
-    private Standard standard;
+    //@Enumerated(EnumType.STRING)
+    @Column(name = "test_standard", nullable = false)
+    private String standard;
     @Column(name = "protocol")
     private String protocol;
     @Column(name = "strength")
@@ -30,10 +30,10 @@ public class Specimen {
     @Column(name = "module")
     private Double module;
 
-    public enum Standard {
+   /* public enum Standard {
         ASTMD3039,
         ASTMD6641,
         ASTMD2344,
         ASTMD7078
-    }
+    }*/
 }
