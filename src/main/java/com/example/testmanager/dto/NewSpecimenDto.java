@@ -20,7 +20,7 @@ public class NewSpecimenDto {
     @NotBlank
     @Size(max = 20, min = 1)
     private String marking;
-    private Specimen.Standard standard;
+    private String standard;
     @NotBlank
     @Size(max = 50, min = 1)
     private String protocol;

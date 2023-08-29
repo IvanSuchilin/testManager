@@ -15,6 +15,6 @@ CREATE TABLE specimens
     marking       VARCHAR(100) NOT NULL,
     test_standard VARCHAR(100) NOT NULL,
     protocol      VARCHAR(50)  NOT NULL,
-    strength      DOUBLE,
-    module        DOUBLE
+    strength      FLOAT,
+    module        FLOAT
 );
