@@ -1,8 +1,11 @@
 package com.example.testmanager.service;
 
 import com.example.testmanager.dto.NewSpecimenDto;
+import com.example.testmanager.dto.SpecimenDtoUpd;
 import com.example.testmanager.exceptions.DataAlreadyExistException;
+import com.example.testmanager.exceptions.NotFounElementException;
 import com.example.testmanager.mappers.SpecimenMapper;
+import com.example.testmanager.model.Specimen;
 import com.example.testmanager.repository.SpecimenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,7 @@ public class SpecimenService {
     private final SpecimenRepository specimenRepository;
     private final SpecimenMapper specimenMapper;
 
-    public NewSpecimenDto createSpecimen(NewSpecimenDto newSpecimen) {
+    public Object createSpecimen(NewSpecimenDto newSpecimen) {
         //validator.validateSpecimenDto(newSpecimen);
         log.debug("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
         if (specimenRepository.findAll()
@@ -30,4 +33,11 @@ public class SpecimenService {
         return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(specimenMapper.INSTANCE.toSpecimen(newSpecimen)));
     }
 
+    public Object update(Long specimenId, SpecimenDtoUpd specimenDtoUpd) {
+        Specimen stored = specimenRepository.findById(specimenId).orElseThrow(() -> new NotFounElementException("Образец с id" + specimenId +
+                "не найден", "Запрашиваемый объект не найден или не доступен",
+                LocalDateTime.now()));
+        log.debug("Получен запрос на обновление данных по образцу {}", stored.getMarking());
+        return specimenRepository.save(stored);
+    }
 }
