@@ -1,6 +1,7 @@
 package com.example.testmanager.service;
 
 import com.example.testmanager.dto.NewSpecimenDto;
+import com.example.testmanager.dto.SpecimenDto;
 import com.example.testmanager.dto.SpecimenDtoUpd;
 import com.example.testmanager.exceptions.DataAlreadyExistException;
 import com.example.testmanager.exceptions.NotFounElementException;
@@ -26,11 +27,15 @@ public class SpecimenService {
         log.debug("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
         if (specimenRepository.findAll()
                 .stream()
-                .anyMatch(u -> u.getMarking().equals(newSpecimen.getMarking()) && u.getProgram().equals(newSpecimen.getProgram()))) {
+                .anyMatch(u -> u.getMarking().equals(newSpecimen.getMarking()) && u.getProgram().getId() == newSpecimen.getProgram())) {
             throw new DataAlreadyExistException("Данные по этому образцу уже внесены", "Необходимо редактировать данные",
                     LocalDateTime.now());
         }
-        return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(specimenMapper.INSTANCE.toSpecimen(newSpecimen)));
+        Specimen toSave = specimenMapper.INSTANCE.toSpecimen(newSpecimen);
+        Specimen stored = specimenRepository.save(toSave);
+        specimenMapper.INSTANCE.toNewSpecimenDto(stored);
+        //return specimenMapper.INSTANCE.toNewSpecimenDto(stored);
+        return specimenRepository.save(toSave);
     }
 
     public Object update(Long specimenId, SpecimenDtoUpd specimenDtoUpd) {
@@ -38,6 +43,11 @@ public class SpecimenService {
                 "не найден", "Запрашиваемый объект не найден или не доступен",
                 LocalDateTime.now()));
         log.debug("Получен запрос на обновление данных по образцу {}", stored.getMarking());
-        return specimenRepository.save(stored);
+        Specimen updated = specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd,stored);
+        Specimen toSave = specimenRepository.save(updated);
+        SpecimenDto toReturn = specimenMapper.INSTANCE.toSpecimenDto(toSave);
+        //return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(updated));
+        //return toReturn;
+        return specimenRepository.save(updated);
     }
 }

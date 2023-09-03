@@ -15,13 +15,13 @@ public class Specimen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "specimen_id", updatable = false, nullable = false, unique = true)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
     @Column(name = "marking", nullable = false)
     private String marking;
     //@Enumerated(EnumType.STRING)
-    @Column(name = "test_standard", nullable = false)
+    @Column(name = "standard", nullable = false)
     private String standard;
     @Column(name = "protocol")
     private String protocol;
