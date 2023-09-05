@@ -20,10 +20,10 @@ import javax.validation.constraints.Positive;
 public class SpecimenController {
     private final SpecimenService specimenService;
 
-    @PostMapping(path = "/specimens")
-    public ResponseEntity<Object> createSpecimen(@RequestBody NewSpecimenDto newSpecimen) {
+    @PostMapping(path = "/program/{programId}/specimens")
+    public ResponseEntity<Object> createSpecimen(@Positive @PathVariable Long programId, @RequestBody NewSpecimenDto newSpecimen) {
         log.info("Внесение в базу образца № " + newSpecimen.getMarking());
-        return new ResponseEntity<>(specimenService.createSpecimen(newSpecimen), HttpStatus.CREATED);
+        return new ResponseEntity<>(specimenService.createSpecimen(programId,newSpecimen), HttpStatus.CREATED);
     }
 
     @PatchMapping(path = "/specimens/{specimenId}")

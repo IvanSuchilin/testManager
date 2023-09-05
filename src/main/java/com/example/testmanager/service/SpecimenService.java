@@ -6,7 +6,9 @@ import com.example.testmanager.dto.SpecimenDtoUpd;
 import com.example.testmanager.exceptions.DataAlreadyExistException;
 import com.example.testmanager.exceptions.NotFounElementException;
 import com.example.testmanager.mappers.SpecimenMapper;
+import com.example.testmanager.model.Program;
 import com.example.testmanager.model.Specimen;
+import com.example.testmanager.repository.ProgramRepository;
 import com.example.testmanager.repository.SpecimenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +22,10 @@ import java.time.LocalDateTime;
 public class SpecimenService {
     //private final DtoValidator validator;
     private final SpecimenRepository specimenRepository;
+    private final ProgramRepository programRepository;
     private final SpecimenMapper specimenMapper;
 
-    public Object createSpecimen(NewSpecimenDto newSpecimen) {
+    public Object createSpecimen(Long programId, NewSpecimenDto newSpecimen) {
         //validator.validateSpecimenDto(newSpecimen);
         log.debug("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
         if (specimenRepository.findAll()
@@ -32,10 +35,11 @@ public class SpecimenService {
                     LocalDateTime.now());
         }
         Specimen toSave = specimenMapper.INSTANCE.toSpecimen(newSpecimen);
-        Specimen stored = specimenRepository.save(toSave);
-        specimenMapper.INSTANCE.toNewSpecimenDto(stored);
-        //return specimenMapper.INSTANCE.toNewSpecimenDto(stored);
-        return specimenRepository.save(toSave);
+        Program storedProgram = programRepository.findById(programId).orElseThrow(() -> new NotFounElementException("Программа с id" + programId +
+                "не найдена", "Запрашиваемый объект не найден или не доступен",
+                LocalDateTime.now()));
+        toSave.setProgram(storedProgram);
+        return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(toSave));
     }
 
     public Object update(Long specimenId, SpecimenDtoUpd specimenDtoUpd) {
@@ -43,11 +47,7 @@ public class SpecimenService {
                 "не найден", "Запрашиваемый объект не найден или не доступен",
                 LocalDateTime.now()));
         log.debug("Получен запрос на обновление данных по образцу {}", stored.getMarking());
-        Specimen updated = specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd,stored);
-        Specimen toSave = specimenRepository.save(updated);
-        SpecimenDto toReturn = specimenMapper.INSTANCE.toSpecimenDto(toSave);
-        //return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(updated));
-        //return toReturn;
-        return specimenRepository.save(updated);
+        Specimen updated = specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd, stored);
+        return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(updated));
     }
 }
