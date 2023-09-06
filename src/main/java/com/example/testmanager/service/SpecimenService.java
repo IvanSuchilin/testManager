@@ -10,6 +10,7 @@ import com.example.testmanager.model.Program;
 import com.example.testmanager.model.Specimen;
 import com.example.testmanager.repository.ProgramRepository;
 import com.example.testmanager.repository.SpecimenRepository;
+import com.example.testmanager.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,13 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class SpecimenService {
-    //private final DtoValidator validator;
+    private final Validator validator;
     private final SpecimenRepository specimenRepository;
     private final ProgramRepository programRepository;
     private final SpecimenMapper specimenMapper;
 
     public Object createSpecimen(Long programId, NewSpecimenDto newSpecimen) {
-        //validator.validateSpecimenDto(newSpecimen);
+        validator.validateNewSpecimenDto(newSpecimen);
         log.debug("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
         if (specimenRepository.findAll()
                 .stream()
@@ -49,5 +50,14 @@ public class SpecimenService {
         log.debug("Получен запрос на обновление данных по образцу {}", stored.getMarking());
         Specimen updated = specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd, stored);
         return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(updated));
+    }
+
+    public void deleteSpecimen(Long specimenId) {
+        Specimen stored = specimenRepository.findById(specimenId).orElseThrow(() -> new NotFounElementException("Образец с id" + specimenId +
+                "не найден", "Запрашиваемый объект не найден или не доступен",
+                LocalDateTime.now()));
+        log.debug("Получен запрос на удаление данных образца {}", stored.getMarking());
+        specimenRepository.deleteById(specimenId);
+        log.info("Данные по образцу {} удалены", stored.getMarking());
     }
 }

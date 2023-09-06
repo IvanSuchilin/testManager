@@ -27,8 +27,15 @@ public class SpecimenController {
     }
 
     @PatchMapping(path = "/specimens/{specimenId}")
-    public ResponseEntity<Object> patch(@Positive @PathVariable Long specimenId, @RequestBody SpecimenDtoUpd specimenDtoUpd) {
+    public ResponseEntity<Object> patchSpecimen(@Positive @PathVariable Long specimenId, @RequestBody SpecimenDtoUpd specimenDtoUpd) {
         log.info("Обновление данных образца {}", specimenId);
         return new ResponseEntity<>(specimenService.update(specimenId, specimenDtoUpd), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping(path = "/specimens/{specimenId}")
+    public ResponseEntity<Object> deleteSpecimen(@Positive @PathVariable Long specimenId){
+        log.info("Удаление данных образца {}", specimenId);
+        specimenService.deleteSpecimen(specimenId);
+        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 }
