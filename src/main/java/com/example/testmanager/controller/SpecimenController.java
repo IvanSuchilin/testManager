@@ -11,6 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -23,7 +25,7 @@ public class SpecimenController {
     @PostMapping(path = "/program/{programId}/specimens")
     public ResponseEntity<Object> createSpecimen(@Positive @PathVariable Long programId, @RequestBody NewSpecimenDto newSpecimen) {
         log.info("Внесение в базу образца № " + newSpecimen.getMarking());
-        return new ResponseEntity<>(specimenService.createSpecimen(programId,newSpecimen), HttpStatus.CREATED);
+        return new ResponseEntity<>(specimenService.createSpecimen(programId, newSpecimen), HttpStatus.CREATED);
     }
 
     @PatchMapping(path = "/specimens/{specimenId}")
@@ -33,9 +35,24 @@ public class SpecimenController {
     }
 
     @DeleteMapping(path = "/specimens/{specimenId}")
-    public ResponseEntity<Object> deleteSpecimen(@Positive @PathVariable Long specimenId){
+    public ResponseEntity<Object> deleteSpecimen(@Positive @PathVariable Long specimenId) {
         log.info("Удаление данных образца {}", specimenId);
         specimenService.deleteSpecimen(specimenId);
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(path = "/specimens/{specimenId}")
+    public ResponseEntity<Object> getSpecimenById(@Positive @PathVariable Long specimenId) {
+        log.info("Получение данных по образцу с id {}", specimenId);
+        return new ResponseEntity<>(specimenService.getSpecimenById(specimenId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/specimens")
+    public ResponseEntity<Object> getSpecimens(@RequestParam(required = false) List<Long> programs,
+                                               @RequestParam(required = false) String standard,
+                                               @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                               @Positive @RequestParam(defaultValue = "10") Integer size) {
+        log.info("Получение данных по образцам");
+        return new ResponseEntity<>(specimenService.getSpecimens(programs, standard, from, size));
     }
 }

@@ -1,5 +1,7 @@
 package com.example.testmanager.service;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import com.example.testmanager.dto.NewSpecimenDto;
 import com.example.testmanager.dto.SpecimenDto;
 import com.example.testmanager.dto.SpecimenDtoUpd;
@@ -13,9 +15,13 @@ import com.example.testmanager.repository.SpecimenRepository;
 import com.example.testmanager.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -59,5 +65,25 @@ public class SpecimenService {
         log.debug("Получен запрос на удаление данных образца {}", stored.getMarking());
         specimenRepository.deleteById(specimenId);
         log.info("Данные по образцу {} удалены", stored.getMarking());
+    }
+
+    public Object getSpecimenById(Long specimenId) {
+        log.debug("Получен запрос на получение данных образца {}", specimenId);
+        Specimen stored = specimenRepository.findById(specimenId).orElseThrow(() -> new NotFounElementException("Образец с id" + specimenId +
+                "не найден", "Запрашиваемый объект не найден или не доступен",
+                LocalDateTime.now()));
+        return SpecimenMapper.INSTANCE.toSpecimenDto(stored);
+    }
+
+    public Object getSpecimens(List<Long> programs, String standard, Integer from, Integer size) {
+        log.info("Получение информации об образцах с фильтром");
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
+        Predicate predicate = createPredicate(programs, standard).getValue();
+        return null;
+    }
+
+    private BooleanBuilder createPredicate(List<Long> programs, String standard) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QSpecimen qSpecimen = QSpecimen.specimen;
     }
 }
