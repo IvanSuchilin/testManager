@@ -1,5 +1,6 @@
 package com.example.testmanager.service;
 
+import com.example.testmanager.model.QSpecimen;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.example.testmanager.dto.NewSpecimenDto;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -76,14 +79,32 @@ public class SpecimenService {
     }
 
     public Object getSpecimens(List<Long> programs, String standard, Integer from, Integer size) {
-        log.info("Получение информации об образцах с фильтром");
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
-        Predicate predicate = createPredicate(programs, standard).getValue();
-        return null;
+        if(programs != null || standard != null) {
+            log.info("Получение информации об образцах с фильтром");
+            Predicate predicate = createPredicate(programs, standard).getValue();
+            List<SpecimenDto> allSpecimens = specimenRepository.findAll(Objects.requireNonNull(predicate), pageable).getContent()
+                    .stream()
+                    .map(SpecimenMapper.INSTANCE::toSpecimenDto)
+                    .collect(Collectors.toList());
+            return allSpecimens;
+        } else {
+            return specimenRepository.findAll()
+                    .stream()
+                    .map(SpecimenMapper.INSTANCE::toSpecimenDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     private BooleanBuilder createPredicate(List<Long> programs, String standard) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QSpecimen qSpecimen = QSpecimen.specimen;
+         if (programs != null){
+             booleanBuilder.and(QSpecimen.specimen.program.id.in(programs));
+         }
+         if (standard != null){
+             booleanBuilder.and(QSpecimen.specimen.standard.eq(standard));
+         }
+        return booleanBuilder;
     }
 }

@@ -53,6 +53,6 @@ public class SpecimenController {
                                                @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получение данных по образцам");
-        return new ResponseEntity<>(specimenService.getSpecimens(programs, standard, from, size));
+        return new ResponseEntity<>(specimenService.getSpecimens(programs, standard, from, size), HttpStatus.OK);
     }
 }

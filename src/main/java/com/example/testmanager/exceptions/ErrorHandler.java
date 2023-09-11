@@ -40,4 +40,18 @@ public class ErrorHandler {
                 "timestamp", LocalDateTime.now().toString()
         );
     }
+
+    @ExceptionHandler({DataAlreadyExistException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleNameAlreadyExistException(
+            final DataAlreadyExistException e
+    ) {
+        log.debug("Возникла ошибка {},", e.getMessage());
+        return Map.of(
+                "message", e.getMessage(),
+                "reason", e.getReason(),
+                "status", "CONFLICT",
+                "timestamp", LocalDateTime.now().toString()
+        );
+    }
 }
