@@ -15,6 +15,7 @@ import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @Slf4j
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping
@@ -28,6 +29,8 @@ public class ProgramController {
     }
     @GetMapping(path ="/program")
     public List<Program> getPrograms(){
+
+        log.info("получение всех програм");
         return programRepository.findAll();
     }
 }
