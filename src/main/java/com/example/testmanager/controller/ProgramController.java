@@ -21,7 +21,6 @@ import java.util.List;
 @RequestMapping
 public class ProgramController {
     private final ProgramService programService;
-    private final ProgramRepository programRepository;
     @PostMapping(path = "/program")
     public ResponseEntity<Object> createProgram (@RequestBody NewProgramDto newProgramDto){
         log.info("Внесение данных программы {}", newProgramDto.getNumber());
@@ -29,8 +28,7 @@ public class ProgramController {
     }
     @GetMapping(path ="/program")
     public List<Program> getPrograms(){
-
         log.info("получение всех програм");
-        return programRepository.findAll();
+        return programService.getPrograms();
     }
 }
