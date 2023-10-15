@@ -2,6 +2,8 @@ package com.example.testmanager.controller;
 
 import com.example.testmanager.dto.NewSpecimenDto;
 import com.example.testmanager.dto.SpecimenDtoUpd;
+import com.example.testmanager.mappers.SpecimenMapper;
+import com.example.testmanager.repository.SpecimenRepository;
 import com.example.testmanager.service.SpecimenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +24,18 @@ import java.util.List;
 @RequestMapping
 public class SpecimenController {
     private final SpecimenService specimenService;
+    private final SpecimenRepository specimenRepository;
 
     @PostMapping(path = "/program/{programId}/specimens")
     public ResponseEntity<Object> createSpecimen(@Positive @PathVariable Long programId, @RequestBody NewSpecimenDto newSpecimen) {
         log.info("Внесение в базу образца № " + newSpecimen.getMarking());
         return new ResponseEntity<>(specimenService.createSpecimen(programId, newSpecimen), HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/specimens")
+    public ResponseEntity<Object> createSpecimenFromForm(@RequestBody NewSpecimenDto newSpecimen) {
+        log.info("Внесение в базу образца № " + newSpecimen.getMarking());
+        return new ResponseEntity<>(specimenRepository.save(SpecimenMapper.INSTANCE.toSpecimen(newSpecimen)), HttpStatus.CREATED);
     }
 
     @PatchMapping(path = "/specimens/{specimenId}")
