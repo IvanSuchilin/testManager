@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpecimenDto {
+    private Long id;
     private String program;
     private String marking;
     private String standard;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.parser.Entity;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Slf4j
@@ -27,8 +28,15 @@ public class ProgramController {
         return new ResponseEntity<>(programService.createProgram(newProgramDto), HttpStatus.CREATED);
     }
     @GetMapping(path ="/program")
-    public List<Program> getPrograms(){
+    public ResponseEntity<Object> getPrograms(){
         log.info("получение всех програм");
-        return programService.getPrograms();
+        return new ResponseEntity<>(programService.getPrograms(), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/program/{programId}")
+    public ResponseEntity<Object> deleteProgram(@Positive @PathVariable Long programId) {
+        log.info("Удаление данных программы {}", programId);
+        programService.deleteProgram(programId);
+        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 }
