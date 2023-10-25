@@ -37,7 +37,8 @@ public class SpecimenService {
 
     public Object createSpecimen(Long programId, NewSpecimenDto newSpecimen) {
         validator.validateNewSpecimenDto(newSpecimen);
-        log.debug("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
+        newSpecimen.setProgram(programId);
+        log.info("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
         if (specimenRepository.findAll()
                 .stream()
                 .anyMatch(u -> u.getMarking().equals(newSpecimen.getMarking()) && u.getProgram().getId() == newSpecimen.getProgram())) {

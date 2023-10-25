@@ -32,11 +32,11 @@ public class SpecimenController {
         return new ResponseEntity<>(specimenService.createSpecimen(programId, newSpecimen), HttpStatus.CREATED);
     }
 
-    @PostMapping(path = "/specimens")
-    public ResponseEntity<Object> createSpecimenFromForm(@RequestBody NewSpecimenDto newSpecimen) {
-        log.info("Внесение в базу образца № " + newSpecimen.getMarking());
-        return new ResponseEntity<>(specimenRepository.save(SpecimenMapper.INSTANCE.toSpecimen(newSpecimen)), HttpStatus.CREATED);
-    }
+//    @PostMapping(path = "/specimens")
+//    public ResponseEntity<Object> createSpecimenFromForm(@RequestBody NewSpecimenDto newSpecimen) {
+//        log.info("Внесение в базу образца через репозиторий № " + newSpecimen.getMarking());
+//        return new ResponseEntity<>(specimenRepository.save(SpecimenMapper.INSTANCE.toSpecimen(newSpecimen)), HttpStatus.CREATED);
+//    }
 
     @PatchMapping(path = "/specimens/{specimenId}")
     public ResponseEntity<Object> patchSpecimen(@Positive @PathVariable Long specimenId, @RequestBody SpecimenDtoUpd specimenDtoUpd) {
