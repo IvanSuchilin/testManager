@@ -1,6 +1,7 @@
 package com.example.testmanager.service;
 
 import com.example.testmanager.dto.NewProgramDto;
+import com.example.testmanager.dto.SpecimenDtoUpd;
 import com.example.testmanager.exceptions.NotFounElementException;
 import com.example.testmanager.mappers.ProgramMapper;
 import com.example.testmanager.model.Program;
@@ -39,5 +40,28 @@ public class ProgramService {
         log.debug("Получен запрос на удаление данных программы {}", stored.getNumber());
         programRepository.deleteById(programId);
         log.info("Данные по программе {} удалены", stored.getNumber());
+    }
+
+    public Object updateProgram(Long programId, Program program) {
+        Program stored = programRepository.findById(programId).orElseThrow(() -> new NotFounElementException("Программа с id" + programId +
+                "не найдена", "Запрашиваемый объект не найден или не доступен",
+                LocalDateTime.now()));
+        log.info("Получен запрос на обновление данных по программе", stored.getNumber());
+        Program updated = updateProgram(program, stored);
+//        return programMapper.INSTANCE.toProgramDto(programRepository.save(updated));
+        return programRepository.save(updated);
+    }
+
+    private Program updateProgram(Program updProgram, Program stored) {
+        if ( updProgram == null ) {
+            return stored;
+        }
+        if ( updProgram.getNumber() != null && !updProgram.getNumber().equals("")) {
+            stored.setNumber( updProgram.getNumber() );
+        }
+        if ( updProgram.getAnnotation() != null && !updProgram.getAnnotation().equals("")) {
+            stored.setAnnotation( updProgram.getAnnotation() );
+        }
+        return stored;
     }
 }

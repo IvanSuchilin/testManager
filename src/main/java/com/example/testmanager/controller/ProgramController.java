@@ -1,6 +1,7 @@
 package com.example.testmanager.controller;
 
 import com.example.testmanager.dto.NewProgramDto;
+import com.example.testmanager.dto.SpecimenDtoUpd;
 import com.example.testmanager.model.Program;
 import com.example.testmanager.repository.ProgramRepository;
 import com.example.testmanager.service.ProgramService;
@@ -39,4 +40,11 @@ public class ProgramController {
         programService.deleteProgram(programId);
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
+
+    @PatchMapping(path = "/program/{programId}")
+    public ResponseEntity<Object> patchProgram(@Positive @PathVariable Long programId, @RequestBody Program program) {
+        log.info("Обновление данных программы {}", programId);
+        return new ResponseEntity<>(programService.updateProgram(programId, program), HttpStatus.CREATED);
+    }
+
 }
