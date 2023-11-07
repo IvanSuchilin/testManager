@@ -1,5 +1,6 @@
 package com.example.testmanager.service;
 
+import com.example.testmanager.dto.UpDtoFront;
 import com.example.testmanager.model.QSpecimen;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,14 +54,15 @@ public class SpecimenService {
         toSave.setProgram(storedProgram);
         return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(toSave));
     }
-
-    public Object update(Long specimenId, SpecimenDtoUpd specimenDtoUpd) {
+    @Transactional
+    public Object update(Long specimenId, UpDtoFront upDtoFront) {
         Specimen stored = specimenRepository.findById(specimenId).orElseThrow(() -> new NotFounElementException("Образец с id" + specimenId +
                 "не найден", "Запрашиваемый объект не найден или не доступен",
                 LocalDateTime.now()));
         log.debug("Получен запрос на обновление данных по образцу {}", stored.getMarking());
-        Specimen updated = specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd, stored);
-        return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(updated));
+        SpecimenDtoUpd specimenDtoUpd = createDto(upDtoFront);
+        specimenRepository.save(specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd, stored));
+        return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.findById(specimenId).get());
     }
 
     public void deleteSpecimen(Long specimenId) {
@@ -100,12 +103,32 @@ public class SpecimenService {
     private BooleanBuilder createPredicate(List<Long> programs, String standard) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QSpecimen qSpecimen = QSpecimen.specimen;
-         if (programs != null){
-             booleanBuilder.and(QSpecimen.specimen.program.id.in(programs));
-         }
-         if (standard != null){
-             booleanBuilder.and(QSpecimen.specimen.standard.eq(standard));
-         }
+        if (programs != null){
+            booleanBuilder.and(qSpecimen.specimen.program.id.in(programs));
+        }
+        if (standard != null){
+            booleanBuilder.and(qSpecimen.specimen.standard.eq(standard));
+        }
         return booleanBuilder;
+    }
+
+    private SpecimenDtoUpd createDto (UpDtoFront upDtoFront){
+        SpecimenDtoUpd specimenDtoUpd = new SpecimenDtoUpd();
+        if (!upDtoFront.getMarking().equals("")){
+            specimenDtoUpd.setMarking(upDtoFront.getMarking());
+        }
+        if(!upDtoFront.getStandard().equals("")){
+            specimenDtoUpd.setStandard(upDtoFront.getStandard());
+        }
+        if(!upDtoFront.getProtocol().equals("")){
+            specimenDtoUpd.setProtocol(upDtoFront.getProtocol());
+        }
+        if(upDtoFront.getStrength() != null){
+            specimenDtoUpd.setStrength(upDtoFront.getStrength());
+        }
+        if(upDtoFront.getModule() != null){
+            specimenDtoUpd.setModule(upDtoFront.getModule());
+        }
+        return  specimenDtoUpd;
     }
 }

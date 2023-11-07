@@ -16,11 +16,10 @@ public class Specimen {
     @Column(name = "specimen_id", updatable = false, nullable = false, unique = true)
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id", referencedColumnName = "id")
     private Program program;
     @Column(name = "marking", nullable = false)
     private String marking;
-    //@Enumerated(EnumType.STRING)
     @Column(name = "standard", nullable = false)
     private String standard;
     @Column(name = "protocol")
@@ -29,11 +28,4 @@ public class Specimen {
     private Double strength;
     @Column(name = "module")
     private Double module;
-
-   /* public enum Standard {
-        ASTMD3039,
-        ASTMD6641,
-        ASTMD2344,
-        ASTMD7078
-    }*/
 }

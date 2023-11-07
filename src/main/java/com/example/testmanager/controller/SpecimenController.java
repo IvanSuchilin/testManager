@@ -2,6 +2,7 @@ package com.example.testmanager.controller;
 
 import com.example.testmanager.dto.NewSpecimenDto;
 import com.example.testmanager.dto.SpecimenDtoUpd;
+import com.example.testmanager.dto.UpDtoFront;
 import com.example.testmanager.mappers.SpecimenMapper;
 import com.example.testmanager.repository.SpecimenRepository;
 import com.example.testmanager.service.SpecimenService;
@@ -39,9 +40,9 @@ public class SpecimenController {
 //    }
 
     @PatchMapping(path = "/specimens/{specimenId}")
-    public ResponseEntity<Object> patchSpecimen(@Positive @PathVariable Long specimenId, @RequestBody SpecimenDtoUpd specimenDtoUpd) {
+    public ResponseEntity<Object> patchSpecimen(@Positive @PathVariable Long specimenId, @RequestBody UpDtoFront upDtoFront) {
         log.info("Обновление данных образца {}", specimenId);
-        return new ResponseEntity<>(specimenService.update(specimenId, specimenDtoUpd), HttpStatus.CREATED);
+        return new ResponseEntity<>(specimenService.update(specimenId, upDtoFront), HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "/specimens/{specimenId}")

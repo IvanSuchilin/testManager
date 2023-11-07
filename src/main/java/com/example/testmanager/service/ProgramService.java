@@ -1,11 +1,9 @@
 package com.example.testmanager.service;
 
 import com.example.testmanager.dto.NewProgramDto;
-import com.example.testmanager.dto.SpecimenDtoUpd;
 import com.example.testmanager.exceptions.NotFounElementException;
 import com.example.testmanager.mappers.ProgramMapper;
 import com.example.testmanager.model.Program;
-import com.example.testmanager.model.Specimen;
 import com.example.testmanager.repository.ProgramRepository;
 import com.example.testmanager.validator.Validator;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,7 @@ public class ProgramService {
         return programRepository.save(programMapper.toProgram(newProgramDto));
     }
 
-    public List<Program> getPrograms(){
+    public List<Program> getPrograms() {
         log.info("Получен запрос на получение данных по всем программам");
         return programRepository.findAll();
     }
@@ -47,20 +45,18 @@ public class ProgramService {
                 "не найдена", "Запрашиваемый объект не найден или не доступен",
                 LocalDateTime.now()));
         log.info("Получен запрос на обновление данных по программе", stored.getNumber());
-        Program updated = updateProgram(program, stored);
-//        return programMapper.INSTANCE.toProgramDto(programRepository.save(updated));
-        return programRepository.save(updated);
+        return programRepository.save(updateProgram(program, stored));
     }
 
     private Program updateProgram(Program updProgram, Program stored) {
-        if ( updProgram == null ) {
+        if (updProgram == null) {
             return stored;
         }
-        if ( updProgram.getNumber() != null && !updProgram.getNumber().equals("")) {
-            stored.setNumber( updProgram.getNumber() );
+        if (updProgram.getNumber() != null && !updProgram.getNumber().equals("")) {
+            stored.setNumber(updProgram.getNumber());
         }
-        if ( updProgram.getAnnotation() != null && !updProgram.getAnnotation().equals("")) {
-            stored.setAnnotation( updProgram.getAnnotation() );
+        if (updProgram.getAnnotation() != null && !updProgram.getAnnotation().equals("")) {
+            stored.setAnnotation(updProgram.getAnnotation());
         }
         return stored;
     }

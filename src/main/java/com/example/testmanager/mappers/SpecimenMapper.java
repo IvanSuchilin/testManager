@@ -17,6 +17,7 @@ import org.mapstruct.factory.Mappers;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface SpecimenMapper {
     SpecimenMapper INSTANCE = Mappers.getMapper(SpecimenMapper.class);
+
     @Mapping(target = "program.id", source = "program")
     Specimen toSpecimen(NewSpecimenDto newSpecimenDto);
 
@@ -24,8 +25,8 @@ public interface SpecimenMapper {
     NewSpecimenDto toNewSpecimenDto(Specimen save);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "program.id", source = "program")
     Specimen updateSpecimen(SpecimenDtoUpd specimenDtoUpd, @MappingTarget Specimen stored);
+
     @Mapping(target = "program", source = "program.number")
-    SpecimenDto toSpecimenDto (Specimen specimen);
+    SpecimenDto toSpecimenDto(Specimen specimen);
 }

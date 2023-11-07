@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpecimenDtoUpd {
-    private Long program;
     private String marking;
     private String standard;
     private String protocol;
