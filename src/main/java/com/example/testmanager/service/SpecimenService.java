@@ -43,8 +43,8 @@ public class SpecimenService {
         log.info("Получен запрос на сохранение данных по образцу {}", newSpecimen.getMarking());
         if (specimenRepository.findAll()
                 .stream()
-                .anyMatch(u -> u.getMarking().equals(newSpecimen.getMarking()) && u.getProgram().getId() == newSpecimen.getProgram())) {
-            throw new DataAlreadyExistException("Данные по этому образцу уже внесены", "Необходимо редактировать данные",
+                .anyMatch(u -> u.getMarking().equals(newSpecimen.getMarking()) && u.getProgram().getId().equals(newSpecimen.getProgram()))) {
+            throw new DataAlreadyExistException("Данные по этому образцу уже внесены", "Необходимо редактировать данные ввода",
                     LocalDateTime.now());
         }
         Specimen toSave = specimenMapper.INSTANCE.toSpecimen(newSpecimen);
@@ -54,13 +54,14 @@ public class SpecimenService {
         toSave.setProgram(storedProgram);
         return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.save(toSave));
     }
+
     @Transactional
     public Object update(Long specimenId, UpDtoFront upDtoFront) {
         Specimen stored = specimenRepository.findById(specimenId).orElseThrow(() -> new NotFounElementException("Образец с id" + specimenId +
                 "не найден", "Запрашиваемый объект не найден или не доступен",
                 LocalDateTime.now()));
         log.debug("Получен запрос на обновление данных по образцу {}", stored.getMarking());
-        SpecimenDtoUpd specimenDtoUpd = createDto(upDtoFront);
+        SpecimenDtoUpd specimenDtoUpd = createDto(upDtoFront, stored.getProgram().getId());
         specimenRepository.save(specimenMapper.INSTANCE.updateSpecimen(specimenDtoUpd, stored));
         return specimenMapper.INSTANCE.toSpecimenDto(specimenRepository.findById(specimenId).get());
     }
@@ -84,7 +85,7 @@ public class SpecimenService {
 
     public Object getSpecimens(List<Long> programs, String standard, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
-        if(programs != null || standard != null) {
+        if (programs != null || standard != null) {
             log.info("Получение информации об образцах с фильтром");
             Predicate predicate = createPredicate(programs, standard).getValue();
             List<SpecimenDto> allSpecimens = specimenRepository.findAll(Objects.requireNonNull(predicate), pageable).getContent()
@@ -103,32 +104,38 @@ public class SpecimenService {
     private BooleanBuilder createPredicate(List<Long> programs, String standard) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QSpecimen qSpecimen = QSpecimen.specimen;
-        if (programs != null){
+        if (programs != null) {
             booleanBuilder.and(qSpecimen.specimen.program.id.in(programs));
         }
-        if (standard != null){
+        if (standard != null) {
             booleanBuilder.and(qSpecimen.specimen.standard.eq(standard));
         }
         return booleanBuilder;
     }
 
-    private SpecimenDtoUpd createDto (UpDtoFront upDtoFront){
+    private SpecimenDtoUpd createDto(UpDtoFront upDtoFront, Long programId) {
         SpecimenDtoUpd specimenDtoUpd = new SpecimenDtoUpd();
-        if (!upDtoFront.getMarking().equals("")){
+        if (!upDtoFront.getMarking().equals("")) {
+            if (specimenRepository.findAll()
+                    .stream()
+                    .anyMatch(u -> u.getMarking().equals(upDtoFront.getMarking()) && Objects.equals(u.getProgram().getId(), programId))) {
+                throw new DataAlreadyExistException("Данные по этому образцу уже внесены", "Необходимо редактировать данные ввода",
+                        LocalDateTime.now());
+            }
             specimenDtoUpd.setMarking(upDtoFront.getMarking());
         }
-        if(!upDtoFront.getStandard().equals("")){
+        if (!upDtoFront.getStandard().equals("")) {
             specimenDtoUpd.setStandard(upDtoFront.getStandard());
         }
-        if(!upDtoFront.getProtocol().equals("")){
+        if (!upDtoFront.getProtocol().equals("")) {
             specimenDtoUpd.setProtocol(upDtoFront.getProtocol());
         }
-        if(upDtoFront.getStrength() != null){
+        if (upDtoFront.getStrength() != null) {
             specimenDtoUpd.setStrength(upDtoFront.getStrength());
         }
-        if(upDtoFront.getModule() != null){
+        if (upDtoFront.getModule() != null) {
             specimenDtoUpd.setModule(upDtoFront.getModule());
         }
-        return  specimenDtoUpd;
+        return specimenDtoUpd;
     }
 }
